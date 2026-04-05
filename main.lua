@@ -25,7 +25,7 @@ local Tabs = {
 }
 
 --// LOAD & BUILD UI TỪNG MODULE
-local AutoFarm = loadModule("AutoFarm.lua")
+local AutoFarm = loadModule("auto_farm.lua")
 local Gacha    = loadModule("Gacha.lua")
 local Upgrade  = loadModule("Upgrade.lua")
 local Misc     = loadModule("Misc.lua")
