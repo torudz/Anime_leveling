@@ -3,12 +3,11 @@ local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/torud
 local RAW = "https://raw.githubusercontent.com/torudz/Anime_leveling/main/"
 
 local function loadModule(file)
-    local src = game:HttpGet(RAW .. file)
+    local src = game:HttpGet(RAW .. file .. "?v=" .. os.time())
     local fn, err = loadstring(src)
     if not fn then warn("[Loader] Lỗi load " .. file .. ": " .. tostring(err)) return {} end
     return fn()
 end
-
 --// SERVICES
 local Players     = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
