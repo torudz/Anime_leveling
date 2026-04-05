@@ -6,7 +6,6 @@ local LocalPlayer = Players.LocalPlayer
 local farmEnabled = false
 local selectedEnemy = nil
 local selectedWorld = nil
-local farmDelay = 0
 
 local function getWorldList()
     local list = {}
@@ -79,22 +78,16 @@ function AutoFarm.BuildUI(tab)
         warn("[AutoFarm] Enemy trong " .. selectedWorld .. ": " .. table.concat(list, ", "))
     end)
 
-    tab:AddSlider("Delay (s)", 0, 5, 0, function(v)
-        farmDelay = v
-    end)
-
     tab:AddToggle("Auto Click", function(state)
-        autoClickEnable = state
-        if not state then return end
-        task.spawn(function()
-            while autoClickEnable do
-                game:GetService("ReplicatedStorage").Remotes.Clicked:FireServer()
-
+    autoClickEnable = state
+    if not state then return end
+    task.spawn(function()
+        while autoClickEnable do
+            game:GetService("ReplicatedStorage").Remotes.Clicked:FireServer()
             task.wait()
-        end
-    end)
-end)
-end
+        end       -- ← đóng while
+    end)          -- ← đóng task.spawn
+end)        
 
     tab:AddToggle("Auto Farm", function(state)
         farmEnabled = state
@@ -112,7 +105,7 @@ end
 
                     end
                 end
-                task.wait(farmDelay)
+                task.wait()
             end
         end)
     end)
