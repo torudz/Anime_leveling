@@ -14,7 +14,7 @@ local Players     = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
 
 --// WINDOW
-local Window = Library:CreateWindow("Toru Hub | Anime Finals", LocalPlayer.Name)
+local Window = Library:CreateWindow("Toru Hub | Anime Leveling", LocalPlayer.Name)
 
 --// TABS
 local Tabs = {
