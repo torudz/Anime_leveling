@@ -26,14 +26,8 @@ local Tabs = {
 
 --// LOAD & BUILD UI TỪNG MODULE
 local AutoFarm = loadModule("auto_farm.lua")
-local Gacha    = loadModule("Gacha.lua")
-local Upgrade  = loadModule("Upgrade.lua")
-local Misc     = loadModule("Misc.lua")
 
 if AutoFarm.BuildUI then AutoFarm.BuildUI(Tabs.AutoFarm) end
-if Gacha.BuildUI    then Gacha.BuildUI(Tabs.Gacha)       end
-if Upgrade.BuildUI  then Upgrade.BuildUI(Tabs.Upgrade)   end
-if Misc.BuildUI     then Misc.BuildUI(Tabs.Misc)         end
 
 -- Notify load xong
 -- Toruz không có built-in notify nên dùng game notify hoặc tự làm
