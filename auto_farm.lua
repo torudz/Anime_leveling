@@ -1,9 +1,11 @@
+```lua
 local AutoFarm = {}
 
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
 
 local farmEnabled = false
+local autoClickEnable = false
 local selectedEnemy = nil
 local selectedWorld = nil
 
@@ -20,88 +22,72 @@ end
 local function getEnemyList(worldName)
     local seen = {}
     local list = {}
-    local worlds = worldName and {workspace:FindFirstChild(worldName)} or workspace:GetChildren()
-    for _, world in pairs(worlds) do
-        if world and world.Name:match("^World") then
-            local ef = world:FindFirstChild("Enemy")
-            if ef then
-                for _, e in pairs(ef:GetChildren()) do
-                    if not seen[e.Name] then
-                        seen[e.Name] = true
-                        table.insert(list, e.Name)
-                    end
-                end
-            end
+    local world = workspace:FindFirstChild(worldName)
+    if not world then return list end
+    local ef = world:FindFirstChild("Enemy")
+    if not ef then return list end
+    for _, e in pairs(ef:GetChildren()) do
+        if not seen[e.Name] then
+            seen[e.Name] = true
+            table.insert(list, e.Name)
         end
     end
     return list
 end
 
-local function findEnemy(worldName, enemyName)
+local function findAliveEnemy(worldName, enemyName)
     local world = workspace:FindFirstChild(worldName)
     if not world then return end
     local ef = world:FindFirstChild("Enemy")
     if not ef then return end
-    return ef:FindFirstChild(enemyName)
+    for _, e in pairs(ef:GetChildren()) do
+        if e.Name == enemyName then
+            local hp = e:GetAttribute("CurrentHP")
+            if hp then
+                local current = tonumber(tostring(hp):split(";")[2])
+                if current and current > 0 then
+                    return e
+                end
+            end
+        end
+    end
 end
 
 function AutoFarm.BuildUI(tab)
-    tab:AddButton("🔍 Scan World & Enemy", function()
-        warn("[AutoFarm] Đang scan, chờ 5s...")
-        task.delay(5, function()
-            local worlds = getWorldList()
-            warn("[AutoFarm] Worlds: " .. table.concat(worlds, ", "))
-            local enemies = getEnemyList(selectedWorld)
-            warn("[AutoFarm] Enemies: " .. table.concat(enemies, ", "))
-        end)
-    end)
-
     tab:AddDropdown("Chọn World", getWorldList(), function(v)
         selectedWorld = v
         selectedEnemy = nil
+        local list = getEnemyList(v)
+        warn("[AutoFarm] Enemy trong " .. v .. ": " .. table.concat(list, ", "))
     end)
 
-    tab:AddDropdown("Chọn Enemy", getEnemyList(nil), function(v)
+    tab:AddDropdown("Chọn Enemy", getEnemyList(getWorldList()[1] or "World1"), function(v)
         selectedEnemy = v
     end)
 
-
-    tab:AddButton("🔄 Load Enemy của World", function()
-        if not selectedWorld then
-            warn("[AutoFarm] Chọn world trước!") return
-        end
-        local list = getEnemyList(selectedWorld)
-        if #list == 0 then
-            warn("[AutoFarm] Không có enemy trong " .. selectedWorld) return
-        end
-        warn("[AutoFarm] Enemy trong " .. selectedWorld .. ": " .. table.concat(list, ", "))
-    end)
-
     tab:AddToggle("Auto Click", function(state)
-    autoClickEnable = state
-    if not state then return end
-    task.spawn(function()
-        while autoClickEnable do
-            game:GetService("ReplicatedStorage").Remotes.Clicked:FireServer()
-            task.wait()
-        end       -- ← đóng while
-    end)          -- ← đóng task.spawn
-end)        
+        autoClickEnable = state
+        if not state then return end
+        task.spawn(function()
+            while autoClickEnable do
+                game:GetService("ReplicatedStorage").Remotes.Clicked:FireServer()
+                task.wait()
+            end
+        end)
+    end)
 
     tab:AddToggle("Auto Farm", function(state)
         farmEnabled = state
         if not state then return end
-
         task.spawn(function()
             while farmEnabled do
                 if selectedWorld and selectedEnemy then
-                    local enemy = findEnemy(selectedWorld, selectedEnemy)
+                    local enemy = findAliveEnemy(selectedWorld, selectedEnemy)
                     if enemy then
                         local root = enemy:FindFirstChild("HumanoidRootPart")
                         if root and LocalPlayer.Character then
                             LocalPlayer.Character.HumanoidRootPart.CFrame = root.CFrame
                         end
-
                     end
                 end
                 task.wait()
