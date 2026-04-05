@@ -1,4 +1,4 @@
-local M = {}
+local AutoFarm = {}
 
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
@@ -46,7 +46,7 @@ local function findEnemy(worldName, enemyName)
     return ef:FindFirstChild(enemyName)
 end
 
-function M.BuildUI(tab)
+function AutoFarm.BuildUI(tab)
     tab:AddButton("🔍 Scan World & Enemy", function()
         warn("[AutoFarm] Đang scan, chờ 5s...")
         task.delay(5, function()
@@ -118,4 +118,4 @@ end
     end)
 end
 
-return M
+return AutoFarm
