@@ -59,13 +59,12 @@ function AutoFarm.BuildUI(tab)
     tab:AddDropdown("Chọn World", getWorldList(), function(v)
         selectedWorld = v
         selectedEnemy = nil
-        warn("[AutoFarm] World: " .. v)
     end)
 
-    tab:AddDropdown("Chọn Enemy", {}, function(v)
+    tab:AddDropdown("Chọn Enemy", getEnemyList(nil), function(v)
         selectedEnemy = v
-        warn("[AutoFarm] Enemy: " .. v)
     end)
+
 
     tab:AddButton("🔄 Load Enemy của World", function()
         if not selectedWorld then
