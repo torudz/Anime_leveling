@@ -1,4 +1,4 @@
-```lua
+
 local AutoFarm = {}
 
 local Players = game:GetService("Players")
